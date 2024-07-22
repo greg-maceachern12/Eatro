@@ -1,13 +1,11 @@
 // src/components/RecipeInput.js
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, TextInput, TouchableOpacity, Image, StyleSheet, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { colors } from '../styles/colors';
 
-const RecipeInput = ({ value, onChangeText }) => {
-  const [image, setImage] = useState(null);
-
+const RecipeInput = ({ value, onChangeText, onImageUpload, onImageRemove, image, isImageMode }) => {
   const handleImageUpload = () => {
     const options = {
       mediaType: 'photo',
@@ -25,28 +23,41 @@ const RecipeInput = ({ value, onChangeText }) => {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const source = { uri: response.assets[0].uri };
-        setImage(source);
+        onImageUpload(source);
       }
     });
   };
 
+  const handleRemoveImage = () => {
+    onImageRemove();
+  };
+
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        multiline
-        placeholder="Paste your recipe here or take a photo of it."
-        value={value}
-        onChangeText={onChangeText}
-      />
-      <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
-        <Icon name="camera-outline" size={24} color={colors.primary} />
-      </TouchableOpacity>
-      {image && (
+      {!isImageMode && (
+        <TextInput
+          style={styles.input}
+          multiline
+          placeholder="Paste your recipe here"
+          value={value}
+          onChangeText={onChangeText}
+          editable={!isImageMode}
+        />
+      )}
+      {isImageMode ? (
         <View style={styles.imageContainer}>
           <Image source={image} style={styles.image} />
-          <Icon name="checkmark-circle" size={24} color={colors.success} style={styles.checkmark} />
+          <TouchableOpacity style={styles.removeButton} onPress={handleRemoveImage}>
+            <Icon name="close-circle" size={24} color={colors.error} />
+          </TouchableOpacity>
         </View>
+      ) : (
+        <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
+          <Icon name="camera-outline" size={24} color={colors.primary} />
+        </TouchableOpacity>
+      )}
+      {isImageMode && (
+        <Text style={styles.imageText}>Image uploaded. Tap the X to remove.</Text>
       )}
     </View>
   );
@@ -75,14 +86,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 200,
     borderRadius: 8,
   },
-  checkmark: {
+  removeButton: {
     position: 'absolute',
     right: -12,
     top: -12,
+  },
+  imageText: {
+    marginTop: 10,
+    textAlign: 'center',
+    color: colors.text,
   },
 });
 

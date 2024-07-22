@@ -8,6 +8,6 @@ export const colors = {
     text: '#000000',
     border: '#CCCCCC',
     white: '#FFFFFF',
-    premium: '#FFD700',
+    save: '#FFD700',
     error: '#FF3B30',
   };

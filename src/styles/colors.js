@@ -10,5 +10,5 @@ export const colors = {
   white: "#FFFFFF",
   save: "#FFD700",
   error: "#FF3B30",
-  main: '#004320',
+  main: '#229669',
 };

@@ -9,7 +9,6 @@ const AdjustmentsInput = ({ value, onChangeText }) => (
     placeholder="What would you like to change with the recipe?"
     value={value}
     onChangeText={onChangeText}
-    keyboardType="numeric"
   />
 );
 

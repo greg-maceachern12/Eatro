@@ -15,7 +15,7 @@ const AdaptButton = ({ onPress, disabled }) => (
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.main,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',

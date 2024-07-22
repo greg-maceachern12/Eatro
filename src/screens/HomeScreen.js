@@ -45,6 +45,7 @@ const HomeScreen = () => {
 
   const handleAdaptRecipe = async () => {
     setIsLoading(true);
+    setAdaptedRecipe(null);
     setError("");
     try {
       let requestBody = {

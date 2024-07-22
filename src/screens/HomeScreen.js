@@ -9,6 +9,7 @@ import AdaptedRecipe from "../components/AdaptedRecipe";
 import SaveRecipeButton from "../components/SaveRecipeButton";
 import { colors } from "../styles/colors";
 import { useRecipes } from "../context/RecipeContext";
+import { PacmanIndicator, WaveIndicator } from 'react-native-indicators'; 
 
 const HomeScreen = () => {
   const [recipe, setRecipe] = useState("");
@@ -114,10 +115,14 @@ const HomeScreen = () => {
         />
         <AdjustmentsInput value={adjustments} onChangeText={setAdjustments} />
         <AdaptButton onPress={handleAdaptRecipe} disabled={isLoading} />
-        {isLoading && <ActivityIndicator size="large" color={colors.primary} />}
+        {isLoading && <PacmanIndicator color={colors.main} />}
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        {adaptedRecipe ? <AdaptedRecipe recipe={adaptedRecipe} /> : null}
-        <SaveRecipeButton onSave={handleSaveRecipe} disabled={!adaptedRecipe} />
+        {adaptedRecipe && (
+          <>
+            <AdaptedRecipe recipe={adaptedRecipe} />
+            <SaveRecipeButton onSave={handleSaveRecipe} disabled={false} />
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

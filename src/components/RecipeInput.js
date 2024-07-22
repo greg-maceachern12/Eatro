@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     minHeight: 100,
+    paddingRight: "10%",
   },
   uploadButton: {
     position: 'absolute',

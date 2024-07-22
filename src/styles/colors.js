@@ -8,7 +8,7 @@ export const colors = {
   text: "#000000",
   border: "#CCCCCC",
   white: "#FFFFFF",
-  save: "#FFD700",
-  error: "#FF3B30",
+  save: "#E2C044",
+  error: "#412234",
   main: '#229669',
 };

@@ -1,7 +1,7 @@
-// src/components/SaveRecipeButton.js
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { colors } from '../styles/colors';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { colors } from "../styles/colors"
 
 const SaveRecipeButton = ({ onSave, disabled }) => {
   return (
@@ -10,7 +10,8 @@ const SaveRecipeButton = ({ onSave, disabled }) => {
       onPress={onSave}
       disabled={disabled}
     >
-      <Text style={styles.buttonText}>
+      <Icon name="bookmark-outline" size={24} color={disabled ? '#999' : '#FFFFFF'} style={styles.icon} />
+      <Text style={[styles.buttonText, disabled && styles.disabledText]}>
         Save Recipe
       </Text>
     </TouchableOpacity>
@@ -20,18 +21,31 @@ const SaveRecipeButton = ({ onSave, disabled }) => {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: colors.save,
-    padding: 15,
-    borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
+    padding: 16,
+    borderRadius: 12,
     marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   disabledButton: {
-    backgroundColor: colors.disabled,
+    backgroundColor: '#E0E0E0',
+  },
+  icon: {
+    marginRight: 8,
   },
   buttonText: {
-    color: colors.white,
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 18,
     fontWeight: 'bold',
+  },
+  disabledText: {
+    color: '#999',
   },
 });
 

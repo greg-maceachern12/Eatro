@@ -1,7 +1,7 @@
-// src/components/AdaptButton.js
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { colors } from '../styles/colors';
+import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { colors } from "../styles/colors"
 
 const AdaptButton = ({ onPress, disabled }) => (
   <TouchableOpacity 
@@ -9,7 +9,10 @@ const AdaptButton = ({ onPress, disabled }) => (
     onPress={onPress}
     disabled={disabled}
   >
-    <Text style={styles.buttonText}>Adapt Recipe</Text>
+    <View style={styles.buttonContent}>
+      <Icon name="color-wand-outline" size={24} color={disabled ? '#A9A9A9' : '#FFFFFF'} />
+      <Text style={[styles.buttonText, disabled && styles.disabledText]}>Adapt Recipe</Text>
+    </View>
   </TouchableOpacity>
 );
 
@@ -19,15 +22,29 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   disabledButton: {
-    backgroundColor: colors.gray,
+    backgroundColor: '#E0E0E0',
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
-    color: colors.white,
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 18,
     fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  disabledText: {
+    color: '#A9A9A9',
   },
 });
 

@@ -9,7 +9,7 @@ import AdaptedRecipe from "../components/AdaptedRecipe";
 import SaveRecipeButton from "../components/SaveRecipeButton";
 import { colors } from "../styles/colors";
 import { useRecipes } from "../context/RecipeContext";
-import { PacmanIndicator, WaveIndicator } from 'react-native-indicators'; 
+import { PacmanIndicator } from "react-native-indicators";
 
 const HomeScreen = () => {
   const [recipe, setRecipe] = useState("");
@@ -104,7 +104,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Recipe Adapter</Text>
+        <Text style={styles.title}>Adapt</Text>
         <RecipeInput
           value={recipe}
           onChangeText={setRecipe}
@@ -115,7 +115,13 @@ const HomeScreen = () => {
         />
         <AdjustmentsInput value={adjustments} onChangeText={setAdjustments} />
         <AdaptButton onPress={handleAdaptRecipe} disabled={isLoading} />
-        {isLoading && <PacmanIndicator color={colors.main} />}
+        {/* {isLoading && <PacmanIndicator color={colors.main} />} */}
+        {isLoading && (
+          <>
+            <ActivityIndicator size="large" color={colors.main} />
+            <p style={styles.loading}>This should only take a few seconds</p>
+          </>
+        )}
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
         {adaptedRecipe && (
           <>
@@ -144,6 +150,11 @@ const styles = StyleSheet.create({
   errorText: {
     color: colors.error,
     marginTop: 10,
+  },
+  loading: {
+    textAlign: "center",
+    fontSize: "0.8rem",
+    fontStyle: "italic",
   },
 });
 

@@ -6,7 +6,7 @@ const AdjustmentsInput = ({ value, onChangeText }) => (
   <View style={styles.container}>
     <Text style={styles.label}>Recipe Adjustments</Text>
     <View style={styles.inputContainer}>
-      <Icon name="create-outline" size={24} color="#666" style={styles.icon} />
+      {/* <Icon name="create-outline" size={24} color="#666" style={styles.icon} /> */}
       <TextInput
         style={styles.input}
         placeholder="e.g., make it vegan, reduce sugar, double the recipe"

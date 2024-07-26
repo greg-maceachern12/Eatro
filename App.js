@@ -16,7 +16,7 @@ const Stack = createStackNavigator();
 
 const HomeStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Recipe Adapter" component={HomeScreen} />
+    <Stack.Screen name="Recipe Queen" component={HomeScreen} />
   </Stack.Navigator>
 );
 
@@ -44,7 +44,7 @@ const App = () => (
             if (route.name === 'Home') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Saved Recipes') {
-              iconName = focused ? 'bookmark' : 'bookmark-outline';
+              iconName = focused ? 'bookmarks' : 'bookmarks-outline';
             } else if (route.name === 'Settings') {
               iconName = focused ? 'settings' : 'settings-outline';
             }

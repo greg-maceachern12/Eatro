@@ -1,8 +1,32 @@
 {
   "expo": {
-    "name": "recipeQueen",
-    "slug": "recipeQueen",
-    "version": "1.0.0"
-  },
-  "name": "recipeQueen"
+    "name": "Recipe Queen",
+    "slug": "recipe-queen",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "splash": {
+      "image": "./assets/logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "icon": "./assets/logo-180.png"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/logo.png"
+    }
+  }
 }

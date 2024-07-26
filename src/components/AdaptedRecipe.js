@@ -8,20 +8,41 @@ const AdaptedRecipe = ({ recipe }) => {
   const handleCopy = () => {
     Clipboard.setString(recipe);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000); // Reset copied state after 2 seconds
+    setTimeout(() => setCopied(false), 2000);
   };
+
+  const parseRecipe = (recipeText) => {
+    const titleMatch = recipeText.match(/\*\*(.*?)\*\*/);
+    const title = titleMatch ? titleMatch[1] : 'Adapted Recipe';
+    const [, ...contentParts] = recipeText.split('**');
+    const content = contentParts.join('').trim();
+
+    const ingredientsMatch = content.match(/Ingredients:([\s\S]*?)(?=Instructions:|$)/);
+    const instructionsMatch = content.match(/Instructions:([\s\S]*)/);
+
+    return {
+      title,
+      ingredients: ingredientsMatch ? ingredientsMatch[1].trim() : '',
+      instructions: instructionsMatch ? instructionsMatch[1].trim() : '',
+    };
+  };
+
+  const { title, ingredients, instructions } = parseRecipe(recipe);
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.title}>Adapted Recipe:</Text>
+        <Text style={styles.title}>{title}</Text>
         <TouchableOpacity onPress={handleCopy} style={styles.copyButton}>
           <Icon name={copied ? "checkmark-circle" : "copy-outline"} size={24} color="#4CAF50" />
           <Text style={styles.copyButtonText}>{copied ? "Copied!" : "Copy"}</Text>
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.recipeContainer}>
-        <Text style={styles.recipe}>{recipe}</Text>
+        <Text style={styles.sectionTitle}>Ingredients:</Text>
+        <Text style={styles.recipeText}>{ingredients}</Text>
+        <Text style={styles.sectionTitle}>Instructions:</Text>
+        <Text style={styles.recipeText}>{instructions}</Text>
       </ScrollView>
     </View>
   );
@@ -44,12 +65,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    paddingBottom: 12,
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#333',
+    flex: 1,
   },
   copyButton: {
     flexDirection: 'row',
@@ -66,10 +91,18 @@ const styles = StyleSheet.create({
   recipeContainer: {
     maxHeight: 300,
   },
-  recipe: {
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#4A90E2',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  recipeText: {
     fontSize: 16,
     color: '#444',
     lineHeight: 24,
+    marginBottom: 16,
   },
 });
 

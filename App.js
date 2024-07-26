@@ -1,8 +1,8 @@
-// App.js
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import HomeScreen from './src/screens/HomeScreen';
 import SavedRecipesScreen from './src/screens/SavedRecipesScreen';
 import RecipeDetailsScreen from './src/screens/RecipeDetailsScreen';
@@ -34,40 +34,42 @@ const SettingsStack = () => (
 );
 
 const App = () => (
-  <RecipeProvider>
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+  <GestureHandlerRootView style={{ flex: 1 }}>
+    <RecipeProvider>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
 
-            if (route.name === 'Home') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'Saved Recipes') {
-              iconName = focused ? 'bookmarks' : 'bookmarks-outline';
-            } else if (route.name === 'Settings') {
-              iconName = focused ? 'settings' : 'settings-outline';
-            }
+              if (route.name === 'Home') {
+                iconName = focused ? 'home' : 'home-outline';
+              } else if (route.name === 'Saved Recipes') {
+                iconName = focused ? 'bookmarks' : 'bookmarks-outline';
+              } else if (route.name === 'Settings') {
+                iconName = focused ? 'settings' : 'settings-outline';
+              }
 
-            return <Icon name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: colors.main,
-          tabBarInactiveTintColor: colors.gray,
-          tabBarStyle: [
-            {
-              display: "flex"
+              return <Icon name={iconName} size={size} color={color} />;
             },
-            null
-          ],
-          headerShown: false,
-        })}
-      >
-        <Tab.Screen name="Home" component={HomeStack} />
-        <Tab.Screen name="Saved Recipes" component={SavedRecipesStack} />
-        <Tab.Screen name="Settings" component={SettingsStack} />
-      </Tab.Navigator>
-    </NavigationContainer>
-  </RecipeProvider>
+            tabBarActiveTintColor: colors.main,
+            tabBarInactiveTintColor: colors.gray,
+            tabBarStyle: [
+              {
+                display: "flex"
+              },
+              null
+            ],
+            headerShown: false,
+          })}
+        >
+          <Tab.Screen name="Home" component={HomeStack} />
+          <Tab.Screen name="Saved Recipes" component={SavedRecipesStack} />
+          <Tab.Screen name="Settings" component={SettingsStack} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </RecipeProvider>
+  </GestureHandlerRootView>
 );
 
 export default App;

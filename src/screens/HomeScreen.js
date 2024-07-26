@@ -1,4 +1,3 @@
-// src/screens/HomeScreen.js
 import React, { useState } from "react";
 import { ScrollView, Text, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,7 +8,6 @@ import AdaptedRecipe from "../components/AdaptedRecipe";
 import SaveRecipeButton from "../components/SaveRecipeButton";
 import { colors } from "../styles/colors";
 import { useRecipes } from "../context/RecipeContext";
-import { PacmanIndicator } from "react-native-indicators";
 
 const HomeScreen = () => {
   const [recipe, setRecipe] = useState("");
@@ -23,16 +21,28 @@ const HomeScreen = () => {
 
   const { saveRecipe } = useRecipes();
 
+
   const handleSaveRecipe = () => {
     if (adaptedRecipe) {
-      saveRecipe({
-        title: `Adapted Recipe (${new Date().toLocaleString()})`,
-        content: adaptedRecipe,
-      });
-      // Optionally, show a confirmation message to the user
+      const titleMatch = adaptedRecipe.match(/\*\*(.*?)\*\*/);
+      let title = "Adapted Recipe";
+      let content = adaptedRecipe;
+
+      if (titleMatch && titleMatch[1]) {
+        title = titleMatch[1].trim();
+        // Remove the title from the content
+        content = adaptedRecipe.replace(/\*\*.*?\*\*/, '').trim();
+      }
+
+      const recipeToSave = {
+        title: title,
+        content: content,
+      };
+      saveRecipe(recipeToSave);
       alert("Recipe saved successfully!");
     }
   };
+
   const handleImageUpload = (source) => {
     setImage(source);
     setIsImageMode(true);
@@ -115,11 +125,10 @@ const HomeScreen = () => {
         />
         <AdjustmentsInput value={adjustments} onChangeText={setAdjustments} />
         <AdaptButton onPress={handleAdaptRecipe} disabled={isLoading} />
-        {/* {isLoading && <PacmanIndicator color={colors.main} />} */}
         {isLoading && (
           <>
             <ActivityIndicator size="large" color={colors.main} />
-            <p style={styles.loading}>This should only take a few seconds</p>
+            <Text style={styles.loading}>This should only take a few seconds</Text>
           </>
         )}
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -153,8 +162,9 @@ const styles = StyleSheet.create({
   },
   loading: {
     textAlign: "center",
-    fontSize: "0.8rem",
+    fontSize: 14,
     fontStyle: "italic",
+    marginTop: 10,
   },
 });
 

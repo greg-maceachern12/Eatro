@@ -65,7 +65,7 @@ const App = () => (
         >
           <Tab.Screen name="Home" component={HomeStack} />
           <Tab.Screen name="Saved Recipes" component={SavedRecipesStack} />
-          <Tab.Screen name="Settings" component={SettingsStack} />
+          {/* <Tab.Screen name="Settings" component={SettingsStack} /> */}
         </Tab.Navigator>
       </NavigationContainer>
     </RecipeProvider>

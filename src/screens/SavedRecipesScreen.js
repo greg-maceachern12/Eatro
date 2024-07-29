@@ -4,17 +4,20 @@ import { useNavigation } from '@react-navigation/native';
 import { useRecipes } from '../context/RecipeContext';
 import { colors } from '../styles/colors';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { formatDistanceToNow } from 'date-fns';
 
 const RecipeCard = ({ recipe, onPress, onDelete }) => (
   <View style={styles.card}>
     <TouchableOpacity onPress={onPress} style={styles.cardContent}>
-      <Icon name="restaurant-outline" size={24} color={colors.main} style={styles.icon} />
-      <View style={styles.textContainer}>
-        <Text style={styles.cardTitle}>{recipe.title}</Text>
-        <Text style={styles.cardPreview} numberOfLines={2}>
-          {recipe.content}
-        </Text>
+      <View style={styles.titleContainer}>
+        <Icon name="restaurant-outline" size={24} color={colors.main} style={styles.icon} />
+        <Text style={styles.cardTitle} numberOfLines={1}>{recipe.title}</Text>
       </View>
+      {recipe.timestamp && (
+        <Text style={styles.timestamp}>
+          {formatDistanceToNow(new Date(recipe.timestamp), { addSuffix: true })}
+        </Text>
+      )}
     </TouchableOpacity>
     <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
       <Icon name="trash-outline" size={24} color={colors.error} />
@@ -35,11 +38,18 @@ const SavedRecipesScreen = () => {
     updateSavedRecipes(updatedRecipes);
   };
 
+  // Sort recipes by timestamp, most recent first
+  const sortedRecipes = [...savedRecipes].sort((a, b) => {
+    const dateA = a.timestamp ? new Date(a.timestamp) : new Date(0);
+    const dateB = b.timestamp ? new Date(b.timestamp) : new Date(0);
+    return dateB - dateA;
+  });
+
   return (
     <View style={styles.container}>
-      {savedRecipes.length > 0 ? (
+      {sortedRecipes.length > 0 ? (
         <FlatList
-          data={savedRecipes}
+          data={sortedRecipes}
           renderItem={({ item }) => (
             <RecipeCard 
               recipe={item} 
@@ -47,7 +57,7 @@ const SavedRecipesScreen = () => {
               onDelete={() => handleDeleteRecipe(item)}
             />
           )}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item, index) => item.timestamp || index.toString()}
           contentContainerStyle={styles.list}
         />
       ) : (
@@ -70,7 +80,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.white,
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 16,
     flexDirection: 'row',
     alignItems: 'center',
@@ -82,28 +92,32 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flex: 1,
+    padding: 16,
+    justifyContent: 'space-between',
+  },
+  titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    marginBottom: 8,
   },
   icon: {
-    marginRight: 16,
-  },
-  textContainer: {
-    flex: 1,
+    marginRight: 12,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: colors.text,
-    marginBottom: 4,
+    flex: 1,
   },
-  cardPreview: {
-    fontSize: 14,
-    color: colors.textSecondary,
+  timestamp: {
+    fontSize: 12,
+    color: colors.gray,
+    fontStyle: 'italic',
   },
   deleteButton: {
     padding: 16,
+    alignSelf: 'stretch',
+    justifyContent: 'center',
   },
   emptyContainer: {
     flex: 1,

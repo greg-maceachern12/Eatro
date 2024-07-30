@@ -6,7 +6,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import HomeScreen from './src/screens/HomeScreen';
 import SavedRecipesScreen from './src/screens/SavedRecipesScreen';
 import RecipeDetailsScreen from './src/screens/RecipeDetailsScreen';
-import SettingsScreen from './src/screens/SettingsScreen';
+import DiscoverScreen from './src/screens/DiscoverScreen';
 import { RecipeProvider } from './src/context/RecipeContext';
 import { colors } from './src/styles/colors';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -14,9 +14,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const HomeStack = () => (
+const AdjustStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Recipe Queen" component={HomeScreen} />
+    <Stack.Screen name="Eatro" component={HomeScreen} />
   </Stack.Navigator>
 );
 
@@ -27,9 +27,9 @@ const SavedRecipesStack = () => (
   </Stack.Navigator>
 );
 
-const SettingsStack = () => (
+const DiscoverStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Settings" component={SettingsScreen} />
+    <Stack.Screen name="Discover" component={DiscoverScreen} />
   </Stack.Navigator>
 );
 
@@ -42,12 +42,12 @@ const App = () => (
             tabBarIcon: ({ focused, color, size }) => {
               let iconName;
 
-              if (route.name === 'Home') {
-                iconName = focused ? 'home' : 'home-outline';
+              if (route.name === 'Modify') {
+                iconName = focused ? 'color-wand' : 'color-wand-outline';
               } else if (route.name === 'Saved Recipes') {
                 iconName = focused ? 'bookmarks' : 'bookmarks-outline';
-              } else if (route.name === 'Settings') {
-                iconName = focused ? 'settings' : 'settings-outline';
+              } else if (route.name === 'Discover') {
+                iconName = focused ? 'fast-food-sharp' : 'fast-food-outline';
               }
 
               return <Icon name={iconName} size={size} color={color} />;
@@ -63,9 +63,9 @@ const App = () => (
             headerShown: false,
           })}
         >
-          <Tab.Screen name="Home" component={HomeStack} />
+          <Tab.Screen name="Modify" component={AdjustStack} />
+          <Tab.Screen name="Discover" component={DiscoverStack} />
           <Tab.Screen name="Saved Recipes" component={SavedRecipesStack} />
-          {/* <Tab.Screen name="Settings" component={SettingsStack} /> */}
         </Tab.Navigator>
       </NavigationContainer>
     </RecipeProvider>

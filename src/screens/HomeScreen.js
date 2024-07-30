@@ -193,7 +193,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Recipe Adapter</Text>
+        <Text style={styles.title}>Modify your Recipe</Text>
         {renderStepIndicator()}
 
         {error ? (
@@ -266,7 +266,7 @@ const HomeScreen = () => {
 
         {step === 3 && adaptedRecipe && (
           <View>
-            <Text style={styles.instruction}>Your adapted recipe:</Text>
+            {/* <Text style={styles.instruction}>Your adapted recipe:</Text> */}
             <AdaptedRecipe recipe={adaptedRecipe} />
             <SaveRecipeButton onSave={handleSaveRecipe} disabled={false} />
             <TouchableOpacity

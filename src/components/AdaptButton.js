@@ -11,7 +11,7 @@ const AdaptButton = ({ onPress, disabled }) => (
   >
     <View style={styles.buttonContent}>
       <Icon name="color-wand-outline" size={24} color={disabled ? '#A9A9A9' : '#FFFFFF'} />
-      <Text style={[styles.buttonText, disabled && styles.disabledText]}>Adapt Recipe</Text>
+      <Text style={[styles.buttonText, disabled && styles.disabledText]}>Modify Recipe</Text>
     </View>
   </TouchableOpacity>
 );

@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
+import { Video } from "expo-av";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Ionicons";
 import RecipeInput from "../components/RecipeInput";
@@ -27,9 +27,9 @@ const HomeScreen = () => {
   const [image, setImage] = useState(null);
   const [isImageMode, setIsImageMode] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const videoRef = useRef(null);
 
   const { saveRecipe } = useRecipes();
-
 
   const handleRecipeChange = (newRecipe) => {
     setRecipe(newRecipe);
@@ -58,6 +58,9 @@ const HomeScreen = () => {
     setIsLoading(true);
     setAdaptedRecipe(null);
     setError("");
+    if (videoRef.current) {
+      await videoRef.current.playAsync();
+    }
     try {
       let requestBody = {
         adjustment: adjustments,
@@ -110,6 +113,10 @@ const HomeScreen = () => {
       handleErrorResponse("ERROR: UNKNOWN");
     } finally {
       setIsLoading(false);
+      if (videoRef.current) {
+        await videoRef.current.stopAsync();
+        await videoRef.current.setPositionAsync(0);
+      }
     }
   };
 
@@ -181,9 +188,16 @@ const HomeScreen = () => {
   const renderStepIndicator = () => (
     <View style={styles.stepIndicator}>
       {[1, 2, 3].map((s) => (
-        <View key={s} style={[styles.step, s === step && styles.activeStep]}>
+        <View
+          key={s}
+          style={[
+            styles.step,
+            s === step && styles.activeStep,
+            s < step && styles.completedStep,
+          ]}
+        >
           <Text style={[styles.stepText, s === step && styles.activeStepText]}>
-            {s}
+            {s < step ? "✓" : s}
           </Text>
         </View>
       ))}
@@ -193,18 +207,19 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Modify your Recipe</Text>
+        <Text style={styles.title}>Eatro</Text>
+        <Text style={styles.subtitle}>Modify your Recipe</Text>
         {renderStepIndicator()}
 
-        {error ? (
+        {error && (
           <View style={styles.errorContainer}>
             <Icon name="alert-circle-outline" size={24} color={colors.error} />
             <Text style={styles.errorText}>{error}</Text>
           </View>
-        ) : null}
+        )}
 
         {step === 1 && (
-          <View>
+          <View style={styles.card}>
             <Text style={styles.instruction}>
               Enter your recipe or upload an image:
             </Text>
@@ -219,7 +234,7 @@ const HomeScreen = () => {
             />
             <TouchableOpacity
               style={[
-                styles.nextButton,
+                styles.button,
                 !recipe && !image && styles.disabledButton,
               ]}
               onPress={() => setStep(2)}
@@ -232,7 +247,7 @@ const HomeScreen = () => {
         )}
 
         {step === 2 && (
-          <View>
+          <View style={styles.card}>
             <Text style={styles.instruction}>
               What adjustments would you like?
             </Text>
@@ -246,7 +261,7 @@ const HomeScreen = () => {
                 style={styles.backButton}
                 onPress={() => setStep(1)}
               >
-                <Icon name="arrow-back" size={20} color="#333" />
+                <Icon name="arrow-back" size={20} color={colors.text} />
                 <Text style={styles.backButtonText}>Back</Text>
               </TouchableOpacity>
               <AdaptButton
@@ -259,16 +274,25 @@ const HomeScreen = () => {
 
         {isLoading && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.main} />
+            <Video
+              ref={videoRef}
+              source={require("../../assets/animation.webm")}
+              style={{
+                width: "150px",
+                height: "150px",
+              }}
+              resizeMode="contain"
+              isLooping
+              shouldPlay={isLoading}
+            />
             <Text style={styles.loadingText}>Adapting your recipe...</Text>
           </View>
         )}
 
         {step === 3 && adaptedRecipe && (
-          <View>
-            {/* <Text style={styles.instruction}>Your adapted recipe:</Text> */}
+          <View style={styles.card}>
             <AdaptedRecipe recipe={adaptedRecipe} />
-            <SaveRecipeButton onSave={handleSaveRecipe} disabled={false} />
+            <SaveRecipeButton onSave={handleSaveRecipe} disabled={isSaved} />
             <TouchableOpacity
               style={styles.startOverButton}
               onPress={handleStartOver}
@@ -292,98 +316,97 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 20,
+    color: colors.main,
     textAlign: "center",
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 24,
+    fontWeight: "600",
+    color: colors.text,
+    textAlign: "center",
+    marginBottom: 24,
   },
   stepIndicator: {
     flexDirection: "row",
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: 32,
   },
   step: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: "#E0E0E0",
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 5,
+    marginHorizontal: 8,
   },
   activeStep: {
     backgroundColor: colors.main,
   },
+  completedStep: {
+    backgroundColor: colors.success,
+  },
   stepText: {
-    color: "#333",
+    color: colors.text,
     fontWeight: "bold",
+    fontSize: 16,
   },
   activeStepText: {
     color: "#FFF",
   },
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 24,
+    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
   instruction: {
     fontSize: 18,
-    marginBottom: 10,
-    color: "#333",
+    marginBottom: 16,
+    color: colors.text,
+    fontWeight: "500",
   },
-  nextButton: {
+  button: {
     backgroundColor: colors.main,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
+    padding: 16,
+    borderRadius: 8,
+    marginTop: 16,
   },
   disabledButton: {
-    backgroundColor: "#ccc",
+    backgroundColor: "#BDBDBD",
   },
   buttonText: {
     color: "#FFF",
-    fontSize: 16,
-    marginRight: 5,
+    fontSize: 18,
+    fontWeight: "600",
+    marginRight: 8,
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
+    marginTop: 16,
   },
   backButton: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    padding: 12,
   },
   backButtonText: {
-    color: "#333",
+    color: colors.text,
     fontSize: 16,
-    marginLeft: 5,
-  },
-  errorText: {
-    color: colors.error,
-    marginTop: 10,
-  },
-  loadingContainer: {
-    alignItems: "center",
-    marginTop: 20,
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: colors.main,
-  },
-  startOverButton: {
-    backgroundColor: colors.main,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 20,
-  },
-  startOverButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    marginLeft: 5,
+    marginLeft: 8,
+    fontWeight: "500",
   },
   errorContainer: {
     flexDirection: "row",
@@ -391,14 +414,39 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFEBEE",
     padding: 16,
     borderRadius: 8,
-    marginTop: 16,
-    marginBottom: 16,
+    marginBottom: 24,
   },
   errorText: {
     color: colors.error,
-    marginLeft: 10,
+    marginLeft: 12,
     flex: 1,
     fontSize: 16,
+  },
+  loadingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 32,
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 18,
+    fontWeight: "500",
+  },
+  startOverButton: {
+    backgroundColor: colors.main,
+    color: "#FFFFFF",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 8,
+    marginTop: 24,
+  },
+  startOverButtonText: {
+    color: "#000",
+    fontSize: 18,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });
 

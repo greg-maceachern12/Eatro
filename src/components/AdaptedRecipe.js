@@ -23,7 +23,6 @@ const AdaptedRecipe = ({ recipe }) => {
 
     Dimensions.addEventListener("change", updateLayout);
     return () => {
-      // For React Native versions < 0.65, use removeEventListener instead
       Dimensions.removeEventListener("change", updateLayout);
     };
   }, []);
@@ -41,14 +40,14 @@ const AdaptedRecipe = ({ recipe }) => {
     const content = contentParts.join("").trim();
 
     const ingredientsMatch = content.match(
-      /Ingredients:([\s\S]*?)(?=Instructions:|$)/
+      /Ingredients([\s\S]*?)(?=Method|STEP 1|$)/i
     );
-    const instructionsMatch = content.match(/Instructions:([\s\S]*)/);
+    const instructionsMatch = content.match(/(Method|STEP 1)([\s\S]*)/i);
 
     return {
       title,
       ingredients: ingredientsMatch ? ingredientsMatch[1].trim() : "",
-      instructions: instructionsMatch ? instructionsMatch[1].trim() : "",
+      instructions: instructionsMatch ? instructionsMatch[0].trim() : "",
     };
   };
 
@@ -78,7 +77,6 @@ const AdaptedRecipe = ({ recipe }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     marginTop: 20,

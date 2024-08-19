@@ -18,7 +18,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "icon": "./assets/logo-180.png"
+      "icon": "./assets/logo-180.png",
+      "bundleIdentifier": "com.gmac12greg.eatro"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,6 +28,11 @@
     },
     "web": {
       "favicon": "./assets/logo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f98742ac-37e4-4425-afaa-2cf78ed05939"
+      }
     }
   }
 }

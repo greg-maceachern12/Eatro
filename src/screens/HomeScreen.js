@@ -207,7 +207,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Eatro</Text>
+        <Text style={styles.title}>🧑‍🍳 Eatro</Text>
         <Text style={styles.subtitle}>Modify your Recipe</Text>
         {renderStepIndicator()}
 

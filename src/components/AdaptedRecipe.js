@@ -34,24 +34,43 @@ const AdaptedRecipe = ({ recipe }) => {
   };
 
   const parseRecipe = (recipeText) => {
-    const titleMatch = recipeText.match(/\*\*(.*?)\*\*/);
-    const title = titleMatch ? titleMatch[1] : "Adapted Recipe";
-    const [, ...contentParts] = recipeText.split("**");
-    const content = contentParts.join("").trim();
+    const lines = recipeText.split('\n');
+    let title = '';
+    let ingredients = [];
+    let instructions = [];
+    let currentSection = '';
 
-    const ingredientsMatch = content.match(
-      /Ingredients([\s\S]*?)(?=Method|STEP 1|$)/i
-    );
-    const instructionsMatch = content.match(/(Method|STEP 1)([\s\S]*)/i);
+    lines.forEach(line => {
+      if (line.startsWith('**') && line.endsWith('**')) {
+        if (line.toLowerCase().includes('ingredients')) {
+          currentSection = 'ingredients';
+        } else if (line.toLowerCase().includes('instructions')) {
+          currentSection = 'instructions';
+        } else {
+          title = line.replace(/\*\*/g, '').trim();
+        }
+      } else {
+        if (currentSection === 'ingredients') {
+          ingredients.push(line.trim());
+        } else if (currentSection === 'instructions') {
+          instructions.push(line.trim());
+        }
+      }
+    });
 
-    return {
-      title,
-      ingredients: ingredientsMatch ? ingredientsMatch[1].trim() : "",
-      instructions: instructionsMatch ? instructionsMatch[0].trim() : "",
-    };
+    return { title, ingredients, instructions };
   };
 
   const { title, ingredients, instructions } = parseRecipe(recipe);
+
+  const renderSection = (title, content) => (
+    <View>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {content.map((item, index) => (
+        <Text key={index} style={styles.recipeText}>{item}</Text>
+      ))}
+    </View>
+  );
 
   return (
     <View style={[styles.container, { maxHeight }]}>
@@ -69,14 +88,13 @@ const AdaptedRecipe = ({ recipe }) => {
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.recipeContainer}>
-        <Text style={styles.sectionTitle}>Ingredients:</Text>
-        <Text style={styles.recipeText}>{ingredients}</Text>
-        <Text style={styles.sectionTitle}>Instructions:</Text>
-        <Text style={styles.recipeText}>{instructions}</Text>
+        {renderSection("Ingredients", ingredients)}
+        {renderSection("Instructions", instructions)}
       </ScrollView>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     marginTop: 20,
@@ -123,13 +141,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#4A90E2',
-    marginTop: 12,
+    marginTop: 16,
     marginBottom: 8,
   },
-  recipe: {
+  recipeText: {
     fontSize: 16,
     color: "#444",
     lineHeight: 24,
+    marginBottom: 4,
   },
 });
 

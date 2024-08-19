@@ -208,7 +208,7 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>🧑‍🍳 Eatro</Text>
-        <Text style={styles.subtitle}>Modify your Recipe</Text>
+        <Text style={styles.subtitle}>Recipe Modification at your Fingertips</Text>
         {renderStepIndicator()}
 
         {error && (
@@ -230,7 +230,7 @@ const HomeScreen = () => {
               onImageRemove={handleImageRemove}
               image={image}
               isImageMode={isImageMode}
-              placeholder="Paste or type your recipe here"
+              placeholder="Enter your recipe (url or text)"
             />
             <TouchableOpacity
               style={[

@@ -63,8 +63,8 @@ const App = () => (
             headerShown: false,
           })}
         >
-          <Tab.Screen name="Modify" component={AdjustStack} />
           <Tab.Screen name="Discover" component={DiscoverStack} />
+          <Tab.Screen name="Modify" component={AdjustStack} />
           <Tab.Screen name="Saved Recipes" component={SavedRecipesStack} />
         </Tab.Navigator>
       </NavigationContainer>

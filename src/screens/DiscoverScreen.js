@@ -23,7 +23,7 @@ const DiscoverScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [modificationInput, setModificationInput] = useState("");
-  const [originalRecipe, setOriginalRecipe] = useState(null);
+  const [showDiscoveredRecipe, setShowDiscoveredRecipe] = useState(false);
 
   const animatedHeight = useRef(new Animated.Value(0)).current;
 
@@ -40,7 +40,6 @@ const DiscoverScreen = () => {
       useNativeDriver: false,
     }).start();
   }, [showAdvancedOptions]);
-
 
   const parseRecipe = (recipeString) => {
     const lines = recipeString.split("\n");
@@ -75,6 +74,7 @@ const DiscoverScreen = () => {
     setIsLoading(true);
     setError("");
     setDiscoveredRecipe(null);
+    setShowDiscoveredRecipe(false);
 
     try {
       const response = await fetch(
@@ -99,6 +99,7 @@ const DiscoverScreen = () => {
       if (data && data.response) {
         const parsedRecipe = parseRecipe(data.response);
         setDiscoveredRecipe(parsedRecipe);
+        setShowDiscoveredRecipe(true);
       } else {
         throw new Error("Invalid response format");
       }
@@ -129,7 +130,12 @@ const DiscoverScreen = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            recipe: discoveredRecipe.title + "\n\nIngredients:\n" + discoveredRecipe.ingredients.join("\n") + "\n\nInstructions:\n" + discoveredRecipe.instructions.join("\n"),
+            recipe:
+              discoveredRecipe.title +
+              "\n\nIngredients:\n" +
+              discoveredRecipe.ingredients.join("\n") +
+              "\n\nInstructions:\n" +
+              discoveredRecipe.instructions.join("\n"),
             adjustment: modificationInput,
           }),
         }
@@ -189,94 +195,97 @@ const DiscoverScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>🍳 Discover Recipes</Text>
-        <Text style={styles.subtitle}>Find your next culinary adventure</Text>
+        {!showDiscoveredRecipe ? (
+          <>
+            <Text style={styles.title}>🍳 Eatro</Text>
+            <Text style={styles.subtitle}>
+              Find your next culinary adventure
+            </Text>
 
-        <View style={styles.card}>
-          <Text style={styles.instruction}>What do you want to make?</Text>
-          <TextInput
-            style={styles.input}
-            value={recipeQuery}
-            onChangeText={setRecipeQuery}
-            placeholder="e.g., chocolate cake, chicken curry"
-          />
-
-          <TouchableOpacity
-            style={styles.advancedOptionsToggle}
-            onPress={toggleAdvancedOptions}
-          >
-            <Text style={styles.advancedOptionsText}>Advanced Options</Text>
-            <Icon
-              name={showAdvancedOptions ? "chevron-up" : "chevron-down"}
-              size={24}
-              color={colors.main}
-            />
-          </TouchableOpacity>
-
-          <Animated.View
-            style={[
-              styles.advancedOptions,
-              {
-                maxHeight: animatedHeight.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 210], // Adjusted for the new content
-                }),
-              },
-            ]}
-          >
-            <Text style={styles.optionTitle}>🧂 Flavor</Text>
-            <View style={styles.optionGroup}>
-              <OptionButton
-                title="Sweet"
-                isSelected={tastePreference === "sweet"}
-                onPress={() => setTastePreference("sweet")}
+            <View style={styles.card}>
+              <Text style={styles.instruction}>What do you want to make?</Text>
+              <TextInput
+                style={styles.input}
+                value={recipeQuery}
+                onChangeText={setRecipeQuery}
+                placeholder="e.g., chocolate cake, chicken curry"
+                multiline
+                numberOfLines={3}
               />
-              <OptionButton
-                title="Savory"
-                isSelected={tastePreference === "savory"}
-                onPress={() => setTastePreference("savory")}
-              />
+
+              <TouchableOpacity
+                style={styles.advancedOptionsToggle}
+                onPress={toggleAdvancedOptions}
+              >
+                <Text style={styles.advancedOptionsText}>Advanced Options</Text>
+                <Icon
+                  name={showAdvancedOptions ? "chevron-up" : "chevron-down"}
+                  size={24}
+                  color={colors.main}
+                />
+              </TouchableOpacity>
+
+              <Animated.View
+                style={[
+                  styles.advancedOptions,
+                  {
+                    maxHeight: animatedHeight.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 210],
+                    }),
+                  },
+                ]}
+              >
+                <Text style={styles.optionTitle}>🧂 Flavor</Text>
+                <View style={styles.optionGroup}>
+                  <OptionButton
+                    title="Sweet"
+                    isSelected={tastePreference === "sweet"}
+                    onPress={() => setTastePreference("sweet")}
+                  />
+                  <OptionButton
+                    title="Savory"
+                    isSelected={tastePreference === "savory"}
+                    onPress={() => setTastePreference("savory")}
+                  />
+                </View>
+                <Text style={styles.optionTitle}>🥦 Health</Text>
+                <View style={styles.optionGroup}>
+                  <OptionButton
+                    title="Tasty"
+                    isSelected={healthPreference === "tasty"}
+                    onPress={() => setHealthPreference("tasty")}
+                  />
+                  <OptionButton
+                    title="Healthy"
+                    isSelected={healthPreference === "healthy"}
+                    onPress={() => setHealthPreference("healthy")}
+                  />
+                </View>
+              </Animated.View>
+
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  (!recipeQuery || isLoading) && styles.disabledButton,
+                ]}
+                onPress={handleDiscoverRecipe}
+                disabled={!recipeQuery || isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#FFF" size="small" />
+                ) : (
+                  <>
+                    <Icon name="search" size={20} color="#FFF" />
+                    <Text style={styles.buttonText}>Discover Recipe</Text>
+                  </>
+                )}
+              </TouchableOpacity>
             </View>
-            <Text style={styles.optionTitle}>🥦 Health</Text>
-            <View style={styles.optionGroup}>
-              <OptionButton
-                title="Tasty"
-                isSelected={healthPreference === "tasty"}
-                onPress={() => setHealthPreference("tasty")}
-              />
-              <OptionButton
-                title="Healthy"
-                isSelected={healthPreference === "healthy"}
-                onPress={() => setHealthPreference("healthy")}
-              />
-            </View>
-          </Animated.View>
 
-          <TouchableOpacity
-            style={[styles.button, !recipeQuery && styles.disabledButton]}
-            onPress={handleDiscoverRecipe}
-            disabled={!recipeQuery || isLoading}
-          >
-            <Text style={styles.buttonText}>Discover Recipe</Text>
-            <Icon name="search" size={20} color="#FFF" />
-          </TouchableOpacity>
-        </View>
-
-        {!discoveredRecipe && (
-          <TouchableOpacity
-            style={styles.discoverButton}
-            onPress={handleDiscoverRecipe}
-            disabled={isLoading}
-          >
-            {isLoading && (
-              <ActivityIndicator color="#FFF" />
-            )}
-          </TouchableOpacity>
-        )}
-
-        {error && <Text style={styles.errorText}>{error}</Text>}
-
-        {discoveredRecipe && (
+            {error && <Text style={styles.errorText}>{error}</Text>}
+          </>
+        ) : (
           <View style={styles.recipeContainer}>
             <Text style={styles.recipeTitle}>{discoveredRecipe.title}</Text>
             <Text style={styles.sectionTitle}>Ingredients:</Text>
@@ -291,7 +300,7 @@ const DiscoverScreen = () => {
                 {index + 1}. {instruction}
               </Text>
             ))}
-            
+
             <View style={styles.modificationContainer}>
               <TextInput
                 style={styles.modificationInput}
@@ -320,13 +329,20 @@ const DiscoverScreen = () => {
               <Icon name="bookmark-outline" size={20} color="#FFF" />
               <Text style={styles.saveButtonText}>Save Recipe</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => setShowDiscoveredRecipe(false)}
+            >
+              <Icon name="arrow-back" size={20} color={colors.main} />
+              <Text style={styles.backButtonText}>Back to Search</Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
     </SafeAreaView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -374,6 +390,8 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     marginBottom: 16,
+    height: 100, // Increased height for taller text input
+    textAlignVertical: "top", // Aligns text to the top in Android
   },
   picker: {
     marginBottom: 16,
@@ -419,11 +437,24 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
   },
+  recipeContainer: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 24,
+    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
   recipeTitle: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 16,
     color: colors.main,
+    textAlign: "center",
   },
   recipeInstructions: {
     fontSize: 16,
@@ -494,8 +525,8 @@ const styles = StyleSheet.create({
     color: "#FFF",
   },
   modificationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 16,
     marginBottom: 16,
   },
@@ -512,12 +543,49 @@ const styles = StyleSheet.create({
     backgroundColor: colors.main,
     padding: 12,
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   retryButtonText: {
-    color: '#FFF',
-    fontWeight: '600',
+    color: "#FFF",
+    fontWeight: "600",
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    marginTop: 16,
+    marginBottom: 8,
+    color: colors.text,
+  },
+
+  ingredientText: {
+    fontSize: 16,
+    marginBottom: 4,
+    paddingLeft: 16,
+  },
+
+  instructionText: {
+    fontSize: 16,
+    marginBottom: 8,
+    lineHeight: 24,
+  },
+
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 16,
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.main,
+  },
+
+  backButtonText: {
+    color: colors.main,
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
   },
 });
 

@@ -221,7 +221,7 @@ const HomeScreen = () => {
         {step === 1 && (
           <View style={styles.card}>
             <Text style={styles.instruction}>
-              Enter your recipe or upload an image:
+              Enter your recipe (text, url or image):
             </Text>
             <RecipeInput
               value={recipe}

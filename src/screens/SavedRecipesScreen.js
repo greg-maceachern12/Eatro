@@ -30,6 +30,7 @@ const SavedRecipesScreen = () => {
   const navigation = useNavigation();
 
   const handleRecipePress = (recipe) => {
+    console.log(recipe)
     navigation.navigate('RecipeDetails', { recipe });
   };
 

@@ -42,7 +42,6 @@ const DiscoverScreen = () => {
     }).start();
   }, [showAdvancedOptions]);
 
-  // const parseRecipe = (recipeString) => {
   //   const lines = recipeString.split("\n");
   //   const title = lines[0].replace(/\*\*/g, "").trim();
   //   const ingredientsIndex = lines.findIndex((line) =>
@@ -75,7 +74,6 @@ const DiscoverScreen = () => {
     setIsLoading(true);
     setError("");
     setDiscoveredRecipe(null);
-    // setShowDiscoveredRecipe(false);
     setShowAdaptedRecipe(false);
 
     try {
@@ -131,12 +129,6 @@ const DiscoverScreen = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            // recipe:
-            //   discoveredRecipe.title +
-            //   "\n\nIngredients:\n" +
-            //   discoveredRecipe.ingredients.join("\n") +
-            //   "\n\nInstructions:\n" +
-            //   discoveredRecipe.instructions.join("\n"),
             recipe: discoveredRecipe,
             adjustment: modificationInput,
           }),
@@ -168,13 +160,7 @@ const DiscoverScreen = () => {
 
   const handleSaveRecipe = () => {
     if (discoveredRecipe) {
-      saveRecipe({
-        title: discoveredRecipe.title,
-        content: `Ingredients:\n${discoveredRecipe.ingredients.join(
-          "\n"
-        )}\n\nInstructions:\n${discoveredRecipe.instructions.join("\n")}`,
-        timestamp: new Date().toISOString(),
-      });
+      saveRecipe(discoveredRecipe);
       alert("Recipe saved successfully!");
     }
   };

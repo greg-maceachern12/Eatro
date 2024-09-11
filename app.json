@@ -18,7 +18,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "icon": "./assets/logo-180.png",
+      "icon": "./assets/logo.png",
       "bundleIdentifier": "com.gmac12greg.eatro"
     },
     "android": {
